@@ -3,13 +3,13 @@
 import {
   RPCDataResponseMessage,
   RPCErrorResponseMessage,
-  RequestMessage,
+  RPCRequestMessage,
   responseEventHandler,
   rpcFetchData,
 } from "../dist/rpc.esm.js";
 
 async function rpcCall() {
-  let requestMessage = new RequestMessage(
+  let requestMessage = new RPCRequestMessage(
     "method", // The name of the method to be invoked
     { foo: "bar" }, // The parameters for the method
     "request_id" // The optional identifier for the request

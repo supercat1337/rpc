@@ -1,6 +1,6 @@
 // @ts-check
 
-export class RequestMessage {
+export class RPCRequestMessage {
   /**
    * Constructs a new RPCRequest instance.
    * @param {string} method - The name of the method to be invoked.

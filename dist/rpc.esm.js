@@ -464,7 +464,7 @@ async function rpcFetchPageData(input, options, id = null, notify = true) {
 
 // @ts-check
 
-class RequestMessage {
+class RPCRequestMessage {
   /**
    * Constructs a new RPCRequest instance.
    * @param {string} method - The name of the method to be invoked.
@@ -532,4 +532,4 @@ class RequestMessage {
   }
 }
 
-export { RPCDataResponseMessage, RPCErrorResponseMessage, RPCPagedResponseMessage, RPC_INTERNAL_ERROR, RPC_INVALID_PARAMS, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_PARSE_ERROR, RequestMessage, extractRPCResponse, responseEventHandler, rpcFetchData, rpcFetchPageData };
+export { RPCDataResponseMessage, RPCErrorResponseMessage, RPCPagedResponseMessage, RPCRequestMessage, RPC_INTERNAL_ERROR, RPC_INVALID_PARAMS, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_PARSE_ERROR, extractRPCResponse, responseEventHandler, rpcFetchData, rpcFetchPageData };

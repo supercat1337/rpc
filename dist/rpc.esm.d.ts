@@ -56,35 +56,7 @@ export class RPCPagedResponseMessage<T> {
     /** @type {null|string} */
     id: null | string;
 }
-export namespace RPC_INTERNAL_ERROR {
-    let code: number;
-    let message: string;
-}
-export namespace RPC_INVALID_PARAMS {
-    let code_1: number;
-    export { code_1 as code };
-    let message_1: string;
-    export { message_1 as message };
-}
-export namespace RPC_INVALID_REQUEST {
-    let code_2: number;
-    export { code_2 as code };
-    let message_2: string;
-    export { message_2 as message };
-}
-export namespace RPC_METHOD_NOT_FOUND {
-    let code_3: number;
-    export { code_3 as code };
-    let message_3: string;
-    export { message_3 as message };
-}
-export namespace RPC_PARSE_ERROR {
-    let code_4: number;
-    export { code_4 as code };
-    let message_4: string;
-    export { message_4 as message };
-}
-export class RequestMessage {
+export class RPCRequestMessage {
     /**
      * Constructs a new RPCRequest instance.
      * @param {string} method - The name of the method to be invoked.
@@ -120,6 +92,34 @@ export class RequestMessage {
      * @returns {FormData} a FormData object representing the RPCRequest.
      */
     toFormData(): FormData;
+}
+export namespace RPC_INTERNAL_ERROR {
+    let code: number;
+    let message: string;
+}
+export namespace RPC_INVALID_PARAMS {
+    let code_1: number;
+    export { code_1 as code };
+    let message_1: string;
+    export { message_1 as message };
+}
+export namespace RPC_INVALID_REQUEST {
+    let code_2: number;
+    export { code_2 as code };
+    let message_2: string;
+    export { message_2 as message };
+}
+export namespace RPC_METHOD_NOT_FOUND {
+    let code_3: number;
+    export { code_3 as code };
+    let message_3: string;
+    export { message_3 as message };
+}
+export namespace RPC_PARSE_ERROR {
+    let code_4: number;
+    export { code_4 as code };
+    let message_4: string;
+    export { message_4 as message };
 }
 /**
  * Extracts a response message from a JSON response object.

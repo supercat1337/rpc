@@ -21,7 +21,7 @@ Some possible use cases for this library include:
 
 ### The library consists of the following classes and functions:
 - responseEventHandler class: This class is used to handle RPC responses and events.
-- RequestMessage class: This class is used to create RPC requests.
+- RPCRequestMessage class: This class is used to create RPC requests.
 - RPCDataResponseMessage class: This class is used to create RPC responses.
 - RPCErrorResponseMessage class: This class is used to create RPC error responses.
 - RPCPagedResponseMessage class: This class is used to create RPC paged responses.
@@ -42,13 +42,13 @@ npm install @supercat1337/rpc
 
 ```js
 import { 
-  RequestMessage, 
+  RPCRequestMessage, 
   RPCErrorResponseMessage, 
   rpcFetchData 
 } from '@supercat1337/rpc';
 
 async function rpcCall() {
-  let requestMessage = new RequestMessage(
+  let requestMessage = new RPCRequestMessage(
     "method", // The name of the method to be invoked
     { foo: "bar" }, // The parameters for the method
     "request_id" // The optional identifier for the request
@@ -85,13 +85,13 @@ The responseEventHandler service is used to handle responses from remote procedu
 import {
   RPCDataResponseMessage,
   RPCErrorResponseMessage,
-  RequestMessage,
+  RPCRequestMessage,
   responseEventHandler,
   rpcFetchData,
 } from '@supercat1337/rpc';
 
 async function rpcCall() {
-  let requestMessage = new RequestMessage(
+  let requestMessage = new RPCRequestMessage(
     "method", // The name of the method to be invoked
     { foo: "bar" }, // The parameters for the method
     "request_id" // The optional identifier for the request

@@ -22,4 +22,4 @@ export {
 
 export { responseEventHandler } from "./responseEventHandler.js";
 
-export { RequestMessage } from "./request.js";
+export { RPCRequestMessage } from "./request.js";
