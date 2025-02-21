@@ -65,15 +65,15 @@ async function rpcCall() {
 rpcCall();
 ```
 
-## responseEventHandler
+## responseEventHandler service
 
-The responseEventHandler class acts as a central hub for response events, allowing different components to listen for and react to specific responses without having to know about each other's implementation details.
+The responseEventHandler service acts as a central hub for response events, allowing different components to listen for and react to specific responses without having to know about each other's implementation details.
 
 Components can subscribe to specific response events using the on method, providing a callback function that will be executed when the response is received. When a response is received, the responseEventHandler instance can notify all subscribed components by emitting the response event, and the subscribed components can react accordingly.
 
-The responseEventHandler class seems to be designed to decouple the components that send and receive responses, making it easier to manage complex workflows and interactions between different parts of the application.
+The responseEventHandler service is designed to decouple the components that send and receive responses, making it easier to manage complex workflows and interactions between different parts of the application.
 
-The responseEventHandler class is likely used to handle responses from remote procedure calls (RPCs), given the presence of RPC-related constants and classes in the surrounding code.
+The responseEventHandler service is used to handle responses from remote procedure calls (RPCs), given the presence of RPC-related constants and classes in the surrounding code.
 
 ### Usage
 
