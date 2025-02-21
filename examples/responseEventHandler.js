@@ -26,7 +26,7 @@ async function rpcCall() {
 responseEventHandler.on( // Subscribe to the response event
   "request_id", // The ID of the response
   (
-    /** @type {RPCDataResponseMessage|RPCErrorResponseMessage} */ rpcResponse // The response message
+    /** @type {RPCDataResponseMessage<{foo: string, bar: number}>|RPCErrorResponseMessage} */ rpcResponse // The response message
   ) => {
     if (rpcResponse instanceof RPCErrorResponseMessage) { // Check if the response is an error
       console.error(rpcResponse.error.message);
