@@ -1,7 +1,10 @@
 {
   "name": "@supercat1337/rpc",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "A simple RPC library for JavaScript",
+  "repository": "https://github.com/supercat1337/rpc",
+  "homepage": "https://github.com/supercat1337/rpc",
+  "keywords": ["rpc", "remote procedure call", "javascript"],
   "license": "MIT",
   "author": "SuperCat",
   "type": "module",
