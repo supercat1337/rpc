@@ -41,7 +41,11 @@ npm install @supercat1337/rpc
 ### Usage
 
 ```js
-import { RequestMessage, RPCErrorResponseMessage, rpcFetchData } from '@supercat1337/rpc';
+import { 
+  RequestMessage, 
+  RPCErrorResponseMessage, 
+  rpcFetchData 
+} from '@supercat1337/rpc';
 
 async function rpcCall() {
   let requestMessage = new RequestMessage(
