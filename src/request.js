@@ -1,8 +1,8 @@
 // @ts-check
 
-export class RPCRequestMessage {
+export class RPCRequestBody {
   /**
-   * Constructs a new RPCRequest instance.
+   * Constructs a new RPCRequestBody instance.
    * @param {string} method - The name of the method to be invoked.
    * @param {{[key: string]: string|number|Blob}} [params] - The parameters for the method.
    * @param {string|null} [id] - The optional identifier for the request.
@@ -15,8 +15,8 @@ export class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a plain object.
-   * @returns {{jsonrpc: string, id: string|null, method: string, params: object}} a plain object representing the RPCRequest.
+   * Converts the RPCRequestBody to a plain object.
+   * @returns {{jsonrpc: string, id: string|null, method: string, params: object}} a plain object representing the RPCRequestBody.
    */
   toJSON() {
     return {
@@ -28,8 +28,8 @@ export class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a JSON string.
-   * @returns {string} A string representing the RPCRequest in JSON format.
+   * Converts the RPCRequestBody to a JSON string.
+   * @returns {string} A string representing the RPCRequestBody in JSON format.
    */
   toString() {
     return JSON.stringify({
@@ -41,8 +41,8 @@ export class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a FormData object.
-   * @returns {FormData} a FormData object representing the RPCRequest.
+   * Converts the RPCRequestBody to a FormData object.
+   * @returns {FormData} a FormData object representing the RPCRequestBody.
    */
   toFormData() {
     const formData = new FormData();

@@ -1,17 +1,17 @@
 // @ts-check
 
 import test from "ava";
-import { RpcErrorResult, PagedData } from "./response.js";
+import { RPCErrorData, PagedData } from "./response.js";
 
-test("RpcErrorResult", (t)=>{
+test("RPCErrorData", (t)=>{
     let customError = new Error("foo");
-    let err = new RpcErrorResult(customError);
+    let err = new RPCErrorData(customError);
     t.is(err.message == customError.message, true);
 });
 
-test("RpcErrorResult as string", (t)=>{
+test("RPCErrorData as string", (t)=>{
     let customError = "foo";
-    let err = new RpcErrorResult(customError);
+    let err = new RPCErrorData(customError);
     t.is(err.message == customError, true);
 });
 

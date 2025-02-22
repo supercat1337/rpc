@@ -31,7 +31,7 @@ const RPC_PARSE_ERROR = {
 
 /** @typedef {{code?:number, message?:string, data?:Object}} IErrorResponseMessage */
 
-class RpcErrorResult {
+class RPCErrorData {
   code = 0;
   message = "";
   data = {};
@@ -53,19 +53,19 @@ class RpcErrorResult {
   }
 }
 
-class RPCErrorResponseMessage {
-  /** @type {RpcErrorResult} */
+class RPCErrorResponse {
+  /** @type {RPCErrorData} */
   error;
   /** @type {null|string} */
   id;
 
   /**
-   * Constructs a new RPCErrorResponseMessage instance.
+   * Constructs a new RPCErrorResponse instance.
    * @param {string|Error|IErrorResponseMessage} error - The error information to be used.
    * @param {string|null} [id] - The optional identifier associated with the error.
    */
   constructor(error, id) {
-    this.error = new RpcErrorResult(error);
+    this.error = new RPCErrorData(error);
     this.id = id || null;
   }
 
@@ -74,14 +74,14 @@ class RPCErrorResponseMessage {
 /**
  * @template T
  */
-class RPCDataResponseMessage {
+class RPCDataResponse {
   /** @type {T} */
   result;
   /** @type {null|string} */
   id;
 
   /**
-   * Constructs a new instance of RPCDataResponseMessage.
+   * Constructs a new instance of RPCDataResponse.
    * @param {T} data - The result data for the response.
    * @param {string|null} [id] - The optional identifier for the response.
    */
@@ -166,7 +166,7 @@ class PagedData {
 /**
  * @template T
  */
-class RPCPagedResponseMessage {
+class RPCPagedResponse {
   /** @type {PagedData<T>} */
   result;
 
@@ -174,7 +174,7 @@ class RPCPagedResponseMessage {
   id;
 
   /**
-   * Constructs an instance of RPCPagedResponseMessage.
+   * Constructs an instance of RPCPagedResponse.
    * @param {Object} data - An object containing data list properties.
    * @param {T[]} data.data - The array of data items.
    * @param {number} data.total - The total count of all data.
@@ -244,23 +244,23 @@ function isResponse(response) {
 }
 
 /**
- * Determines if the provided response contains an error and returns an appropriate RPCErrorResponseMessage.
+ * Determines if the provided response contains an error and returns an appropriate RPCErrorResponse.
  * Logs and returns a parse error if the response is null or undefined.
- * If the response contains an error, a RPCErrorResponseMessage is returned with the provided error and id.
+ * If the response contains an error, a RPCErrorResponse is returned with the provided error and id.
  * If the response contains a result, it returns false indicating no error.
  * @param {Object} response - The response object to be checked for errors.
  * @param {string} [id]
- * @returns {RPCErrorResponseMessage|false} - A RPCErrorResponseMessage object if an error exists, or false if no error is found.
+ * @returns {RPCErrorResponse|false} - A RPCErrorResponse object if an error exists, or false if no error is found.
  */
 
 function extractErrorResponse(response, id = null) {
   if (!isResponse(response)) {
     console.error(response);
-    return new RPCErrorResponseMessage(RPC_PARSE_ERROR, id);
+    return new RPCErrorResponse(RPC_PARSE_ERROR, id);
   }
 
   if (response.error) {
-    return new RPCErrorResponseMessage(response.error, response.id || id);
+    return new RPCErrorResponse(response.error, response.id || id);
   }
 
   if (response.result) {
@@ -273,12 +273,12 @@ function extractErrorResponse(response, id = null) {
  * @template T
  * @param {any} response
  * @param {string} [id]
- * @returns {RPCPagedResponseMessage<T> | RPCErrorResponseMessage}
+ * @returns {RPCPagedResponse<T> | RPCErrorResponse}
  */
 function extractPagedResponse(response, id = null) {
   if (!isResponse(response)) {
     console.error(response);
-    return new RPCErrorResponseMessage(RPC_PARSE_ERROR, id);
+    return new RPCErrorResponse(RPC_PARSE_ERROR, id);
   }
 
   let errorResponse = extractErrorResponse(response);
@@ -288,10 +288,10 @@ function extractPagedResponse(response, id = null) {
   }
 
   try {
-    return new RPCPagedResponseMessage(response.result, response.id);
+    return new RPCPagedResponse(response.result, response.id);
   } catch (e) {
     console.error(e);
-    return new RPCErrorResponseMessage(e, response.id || id);
+    return new RPCErrorResponse(e, response.id || id);
   }
 }
 
@@ -327,12 +327,12 @@ function isPagedResponse(response) {
  * @template T
  * @param {any} response
  * @param {string} [id]
- * @returns {RPCDataResponseMessage<T> | RPCErrorResponseMessage}
+ * @returns {RPCDataResponse<T> | RPCErrorResponse}
  */
 function extractDataResponse(response, id) {
   if (!isResponse(response)) {
     console.error(response);
-    return new RPCErrorResponseMessage(RPC_PARSE_ERROR, id);
+    return new RPCErrorResponse(RPC_PARSE_ERROR, id);
   }
 
   let errorResponse = extractErrorResponse(response);
@@ -341,7 +341,7 @@ function extractDataResponse(response, id) {
     return errorResponse;
   }
 
-  return new RPCDataResponseMessage(response.result, response.id || id);
+  return new RPCDataResponse(response.result, response.id || id);
 }
 
 /**
@@ -370,15 +370,20 @@ function getResponseType(response) {
 
 /**
  * Extracts a response message from a JSON response object.
+ * @template T
  * @param {any} object - The JSON response object to be extracted.
- * @param {string} [id] - The ID of the response.
- * @param {boolean} [notify] - Whether to notify the response event handler.
- * @returns {RPCDataResponseMessage|RPCErrorResponseMessage|RPCPagedResponseMessage}
+ * @param {Object} [rpcOptions = {}] - Options for the RPC protocol.
+ * @param {string} [rpcOptions.id] - The ID of the response.
+ * @param {boolean} [rpcOptions.notify] - Whether to notify the response event handler.
+ * @returns {RPCDataResponse<T>|RPCErrorResponse|RPCPagedResponse<T>}
  *   The extracted response message, or an array of extracted response messages.
  */
-function extractRPCResponse(object, id = null, notify = true) {
+function extractRPCResponse(object = {}, rpcOptions = {}) {
+
+  rpcOptions.notify = rpcOptions.hasOwnProperty("notify")? rpcOptions.notify : true;
+
   if (!isResponse(object)) {
-    return new RPCErrorResponseMessage(RPC_PARSE_ERROR, id);
+    return new RPCErrorResponse(RPC_PARSE_ERROR, rpcOptions.id);
   }
   const responseType = getResponseType(object);
 
@@ -386,59 +391,71 @@ function extractRPCResponse(object, id = null, notify = true) {
 
   if (responseType === "error") {
     // Create an error response message
-    response = new RPCErrorResponseMessage(object.error, id);
+    response = new RPCErrorResponse(object.error, object.id || rpcOptions.id);
   } else if (responseType === "data") {
     // Extract the response message from the JSON
-    response = extractDataResponse(object, id);
+    response = extractDataResponse(object, object.id || rpcOptions.id);
   } else if (responseType === "pagedData") {
     // Extract the response message from the JSON
-    response = extractPagedResponse(object, id);
+    response = extractPagedResponse(object, object.id || rpcOptions.id);
   }
 
-  if (notify) {
+  if (rpcOptions.notify) {
     responseEventHandler.notify(response);
   }
 
   return response;
 }
 
+// @ts-check
+
+
 /**
  * Fetches a resource and returns a response message in RPC format.
  * @template T
  * @param {string | URL | Request} input - The URL of the resource to fetch.
- * @param {RequestInit} [options] - Options for the fetch call.
- * @param {string} [id] - The ID of the response.
- * @param {boolean} [notify] - Whether to notify the response event handler.
- * @returns {Promise<RPCErrorResponseMessage | RPCDataResponseMessage<T> | RPCPagedResponseMessage<T>>}
+ * @param {RequestInit} [fetchOptions] - Options for the fetch call.
+ * @param {Object} [rpcOptions = {}] - Options for the RPC protocol.
+ * @param {string} [rpcOptions.id] - The default ID of the response.
+ * @param {boolean} [rpcOptions.notify] - Whether to notify the response event handler.
+ * @param {(input: string | URL | Request, init?: RequestInit)=>Promise<Response>} [rpcOptions.fetch] - The fetch function to use.
+ * @returns {Promise<RPCErrorResponse | RPCDataResponse<T> | RPCPagedResponse<T>>}
  */
-async function rpcFetch(input, options, id = null, notify = true) {
+async function rpcFetch(input, fetchOptions, rpcOptions = {}) {
   try {
-    const fetchResponse = await fetch(input, options);
+    const f = rpcOptions.fetch || fetch;
+    const fetchResponse = await f(input, fetchOptions);
     let object = await fetchResponse.json();
-    let rpcResponse = extractRPCResponse(object, id, notify);
+    let rpcResponse = extractRPCResponse(
+      object,
+      rpcOptions
+    );
     return rpcResponse;
   } catch (e) {
     console.error(e);
-    return new RPCErrorResponseMessage(e, id);
+    return new RPCErrorResponse(e, rpcOptions.id);
   }
 }
-
 
 /**
  * Fetches data using the RPC protocol and returns a response message.
  * This function acts as a wrapper around the `rpcFetch` function.
  * @template T
  * @param {string | URL | Request} input - The URL of the resource to fetch.
- * @param {RequestInit} [options] - Options for the fetch call.
- * @param {string} [id] - The ID of the response.
- * @param {boolean} [notify] - Whether to notify the response event handler.
- * @returns {Promise<RPCErrorResponseMessage | RPCDataResponseMessage<T>>}
+ * @param {RequestInit} [fetchOptions] - Options for the fetch call.
+ * @param {Object} [rpcOptions = {}] - Options for the RPC protocol.
+ * @param {string} [rpcOptions.id] - The default ID of the response.
+ * @param {boolean} [rpcOptions.notify] - Whether to notify the response event handler.
+ * @param {(input: string | URL | Request, init?: RequestInit)=>Promise<Response>} [rpcOptions.fetch] - The fetch function to use.
+ * @returns {Promise<RPCErrorResponse | RPCDataResponse<T>>}
  *   A promise that resolves to an RPC response message.
  */
-async function rpcFetchData(input, options, id = null, notify = true) {
-  let response = await rpcFetch(input, options, id, notify);
-  if (response instanceof RPCPagedResponseMessage) {
-    return /** @type {RPCDataResponseMessage<T>} */ (new RPCDataResponseMessage(response.result, response.id));
+async function rpcFetchData(input, fetchOptions, rpcOptions = {}) {
+  let response = await rpcFetch(input, fetchOptions, rpcOptions);
+  if (response instanceof RPCPagedResponse) {
+    return /** @type {RPCDataResponse<T>} */ (
+      new RPCDataResponse(response.result, response.id)
+    );
   }
   return response;
 }
@@ -448,25 +465,27 @@ async function rpcFetchData(input, options, id = null, notify = true) {
  * This function acts as a wrapper around the `rpcFetch` function.
  * @template T
  * @param {string | URL | Request} input - The URL of the resource to fetch.
- * @param {RequestInit} [options] - Options for the fetch call.
- * @param {string} [id] - The ID of the response.
- * @param {boolean} [notify] - Whether to notify the response event handler.
- * @returns {Promise<RPCErrorResponseMessage | RPCPagedResponseMessage<T>>}
+ * @param {RequestInit} [fetchOptions] - Options for the fetch call.
+ * @param {Object} [rpcOptions = {}] - Options for the RPC protocol.
+ * @param {string} [rpcOptions.id] - The default ID of the response.
+ * @param {boolean} [rpcOptions.notify] - Whether to notify the response event handler.
+ * @param {(input: string | URL | Request, init?: RequestInit)=>Promise<Response>} [rpcOptions.fetch] - The fetch function to use.
+ * @returns {Promise<RPCErrorResponse | RPCPagedResponse<T>>}
  *   A promise that resolves to an RPC response message with pagination properties.
  */
-async function rpcFetchPageData(input, options, id = null, notify = true) {
-  let response = await rpcFetch(input, options, id, notify);
-  if (response instanceof RPCDataResponseMessage) {
-    return new RPCErrorResponseMessage(RPC_PARSE_ERROR, response.id);
+async function rpcFetchPageData(input, fetchOptions, rpcOptions = {}) {
+  let response = await rpcFetch(input, fetchOptions, rpcOptions);
+  if (response instanceof RPCDataResponse) {
+    return new RPCErrorResponse(RPC_PARSE_ERROR, response.id);
   }
   return response;
 }
 
 // @ts-check
 
-class RPCRequestMessage {
+class RPCRequestBody {
   /**
-   * Constructs a new RPCRequest instance.
+   * Constructs a new RPCRequestBody instance.
    * @param {string} method - The name of the method to be invoked.
    * @param {{[key: string]: string|number|Blob}} [params] - The parameters for the method.
    * @param {string|null} [id] - The optional identifier for the request.
@@ -479,8 +498,8 @@ class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a plain object.
-   * @returns {{jsonrpc: string, id: string|null, method: string, params: object}} a plain object representing the RPCRequest.
+   * Converts the RPCRequestBody to a plain object.
+   * @returns {{jsonrpc: string, id: string|null, method: string, params: object}} a plain object representing the RPCRequestBody.
    */
   toJSON() {
     return {
@@ -492,8 +511,8 @@ class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a JSON string.
-   * @returns {string} A string representing the RPCRequest in JSON format.
+   * Converts the RPCRequestBody to a JSON string.
+   * @returns {string} A string representing the RPCRequestBody in JSON format.
    */
   toString() {
     return JSON.stringify({
@@ -505,8 +524,8 @@ class RPCRequestMessage {
   }
 
   /**
-   * Converts the RPCRequest to a FormData object.
-   * @returns {FormData} a FormData object representing the RPCRequest.
+   * Converts the RPCRequestBody to a FormData object.
+   * @returns {FormData} a FormData object representing the RPCRequestBody.
    */
   toFormData() {
     const formData = new FormData();
@@ -532,4 +551,4 @@ class RPCRequestMessage {
   }
 }
 
-export { RPCDataResponseMessage, RPCErrorResponseMessage, RPCPagedResponseMessage, RPCRequestMessage, RPC_INTERNAL_ERROR, RPC_INVALID_PARAMS, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_PARSE_ERROR, extractRPCResponse, responseEventHandler, rpcFetchData, rpcFetchPageData };
+export { RPCDataResponse, RPCErrorResponse, RPCPagedResponse, RPCRequestBody, RPC_INTERNAL_ERROR, RPC_INVALID_PARAMS, RPC_INVALID_REQUEST, RPC_METHOD_NOT_FOUND, RPC_PARSE_ERROR, extractRPCResponse, responseEventHandler, rpcFetchData, rpcFetchPageData };

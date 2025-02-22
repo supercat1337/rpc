@@ -1,13 +1,13 @@
 // @ts-check
 
 import {
-  RPCErrorResponseMessage,
-  RPCRequestMessage,
+  RPCErrorResponse,
+  RPCRequestBody,
   rpcFetchData,
 } from "../dist/rpc.esm.js";
 
 async function rpcCall() {
-  let requestMessage = new RPCRequestMessage(
+  let requestMessage = new RPCRequestBody(
     "method", // The name of the method to be invoked
     { foo: "bar" }, // The parameters for the method
     "request_id" // The optional identifier for the request
@@ -18,7 +18,7 @@ async function rpcCall() {
     body: requestMessage.toFormData(),
   });
 
-  if (rpcResponse instanceof RPCErrorResponseMessage) {
+  if (rpcResponse instanceof RPCErrorResponse) {
     console.error(rpcResponse.error.message);
   } else {
     console.log(rpcResponse.result);

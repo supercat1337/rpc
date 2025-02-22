@@ -2,7 +2,7 @@
 
 /** @typedef {{code?:number, message?:string, data?:Object}} IErrorResponseMessage */
 
-export class RpcErrorResult {
+export class RPCErrorData {
   code = 0;
   message = "";
   data = {};
@@ -24,19 +24,19 @@ export class RpcErrorResult {
   }
 }
 
-export class RPCErrorResponseMessage {
-  /** @type {RpcErrorResult} */
+export class RPCErrorResponse {
+  /** @type {RPCErrorData} */
   error;
   /** @type {null|string} */
   id;
 
   /**
-   * Constructs a new RPCErrorResponseMessage instance.
+   * Constructs a new RPCErrorResponse instance.
    * @param {string|Error|IErrorResponseMessage} error - The error information to be used.
    * @param {string|null} [id] - The optional identifier associated with the error.
    */
   constructor(error, id) {
-    this.error = new RpcErrorResult(error);
+    this.error = new RPCErrorData(error);
     this.id = id || null;
   }
 
@@ -45,14 +45,14 @@ export class RPCErrorResponseMessage {
 /**
  * @template T
  */
-export class RPCDataResponseMessage {
+export class RPCDataResponse {
   /** @type {T} */
   result;
   /** @type {null|string} */
   id;
 
   /**
-   * Constructs a new instance of RPCDataResponseMessage.
+   * Constructs a new instance of RPCDataResponse.
    * @param {T} data - The result data for the response.
    * @param {string|null} [id] - The optional identifier for the response.
    */
@@ -137,7 +137,7 @@ export class PagedData {
 /**
  * @template T
  */
-export class RPCPagedResponseMessage {
+export class RPCPagedResponse {
   /** @type {PagedData<T>} */
   result;
 
@@ -145,7 +145,7 @@ export class RPCPagedResponseMessage {
   id;
 
   /**
-   * Constructs an instance of RPCPagedResponseMessage.
+   * Constructs an instance of RPCPagedResponse.
    * @param {Object} data - An object containing data list properties.
    * @param {T[]} data.data - The array of data items.
    * @param {number} data.total - The total count of all data.

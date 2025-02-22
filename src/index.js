@@ -2,14 +2,17 @@
 
 export {
   extractRPCResponse,
-  rpcFetchData,
-  rpcFetchPageData,
 } from "./api.js";
 
 export {
-  RPCDataResponseMessage,
-  RPCPagedResponseMessage,
-  RPCErrorResponseMessage,
+  rpcFetchData,
+  rpcFetchPageData,
+} from "./fetch.js";
+
+export {
+  RPCDataResponse,
+  RPCPagedResponse,
+  RPCErrorResponse,
 } from "./response.js";
 
 export {
@@ -22,4 +25,4 @@ export {
 
 export { responseEventHandler } from "./responseEventHandler.js";
 
-export { RPCRequestMessage } from "./request.js";
+export { RPCRequestBody } from "./request.js";
